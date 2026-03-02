@@ -1,27 +1,41 @@
 <!DOCTYPE html>
-<html>
+<html lang="sv">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Kaffeshop</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <div class="page">
+    <header class="header">
+      <h1>Kaffeshop Produkter</h1>
+      <button class="btn btn-primary" id="btnLoad">Ladda produkter</button>
+    </header>
 
-  <h1>Kaffeshop Produkter</h1>
+    <main class="grid">
+      <section class="card">
+        <h2>Produkter</h2>
+        <div id="products" class="products"></div>
+      </section>
 
-  <button onclick="loadProducts()">Ladda produkter</button>
+      <section class="card">
+        <h2>Visa order (JOIN)</h2>
+        <p class="muted">Skriv ett <b>Order-ID</b> (bara siffror, t.ex. 5) och klicka hämta.</p>
 
-  <div id="products"></div>
+        <div class="row">
+          <input id="orderId" type="number" min="1" step="1" placeholder="Order-ID" />
+          <button class="btn btn-primary" id="btnOrder">Hämta order</button>
+        </div>
 
-  <hr>
+        <div id="orderResult" class="result"></div>
 
-  <h2>Visa order (JOIN)</h2>
-  <p>Skriv ett order-id och klicka hämta:</p>
-
-  <input id="orderId" type="number" placeholder="Order ID">
-  <button onclick="loadOrder()">Hämta order</button>
-
-  <pre id="orderResult"></pre>
+        <div class="footer-note">
+          Backend: <a href="http://localhost:3000" target="_blank" rel="noreferrer">http://localhost:3000</a>
+        </div>
+      </section>
+    </main>
+  </div>
 
   <script src="script.js"></script>
 </body>
