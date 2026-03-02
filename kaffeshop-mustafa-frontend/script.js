@@ -10,6 +10,30 @@ const orderResultEl = document.getElementById("orderResult");
 btnLoad.addEventListener("click", loadProducts);
 btnOrder.addEventListener("click", loadOrderJoin);
 
+document.getElementById("btnAdd").addEventListener("click", async () => {
+  const product = {
+    name: document.getElementById("newName").value,
+    description: document.getElementById("newDesc").value,
+    price: Number(document.getElementById("newPrice").value),
+    stock: Number(document.getElementById("newStock").value),
+    category_id: Number(document.getElementById("newCat").value),
+  };
+
+  try {
+    const res = await fetch(`${API}/products`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(product),
+    });
+
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    alert("Produkt skapad!");
+    loadProducts();
+  } catch (err) {
+    alert("Fel: " + err.message);
+  }
+});
+
 async function loadProducts() {
   productsEl.innerHTML = `<div class="muted">Laddar...</div>`;
 
