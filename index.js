@@ -1,4 +1,6 @@
 // Kaffeshop Backend
+
+// ■ Importer och inställningar 
 require("dotenv").config();
 const express = require("express");
 const mysql = require("mysql2");
@@ -13,6 +15,8 @@ const db = mysql.createConnection({
  password: process.env.DB_PASSWORD, // ditt lösenord
  database: process.env.DB_NAME
 });
+
+//Försöker koppla upp sig till databasen 
 db.connect((err) => {
  if (err) {
  console.log("Fel vid anslutning till databasen");
@@ -20,10 +24,12 @@ db.connect((err) => {
  console.log("Ansluten till MySQL!");
  }
 });
+
+ 
 // ===============================
 // PRODUKTER
 // ===============================
-// ■ Hämta alla produkter
+// ■ Hämta alla produkter 
 app.get("/products", (req, res) => {
  db.query("SELECT * FROM products", (err, result) => {
  if (err) {
@@ -125,7 +131,7 @@ app.get("/orders", (req, res) => {
 });
 
 /**
- * JOIN: Hämta en order med items + produktinfo
+ * JOIN: Hämta en order med items + produktinfo Mustafa
  */
 app.get("/orders/:id/join", (req, res) => {
   const orderId = req.params.id;
