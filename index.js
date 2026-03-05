@@ -8,7 +8,8 @@ const cors = require("cors");
 const app = express();
 app.use(cors());
 app.use(express.json());
-// ■ Koppla till MySQL
+
+// ■ Anslutningskonfiguration till MySQL
 const db = mysql.createConnection({
  host: process.env.DB_HOST,
  user: process.env.DB_USER,
@@ -30,15 +31,24 @@ db.connect((err) => {
 // PRODUKTER
 // ===============================
 // ■ Hämta alla produkter 
+
 app.get("/products", (req, res) => {
- db.query("SELECT * FROM products", (err, result) => {
- if (err) {
- res.send("Fel vid hämtning av produkter");
- } else {
- res.json(result);
- }
- });
+  const { category_id } = req.query;
+
+  let query = "SELECT * FROM products";
+  let params = [];
+
+  if (category_id) {
+    query += " WHERE category_id = ?";
+    params.push(category_id);
+  }
+
+  db.query(query, params, (err, rows) => {
+    if (err) return res.status(500).send("Databasfel");
+    res.json(rows);
+  });
 });
+
 // ■ Hämta en produkt
 app.get("/products/:id", (req, res) => {
  const id = req.params.id;
@@ -54,20 +64,45 @@ app.get("/products/:id", (req, res) => {
  }
  });
 });
+
+// Hämtar alla kategorier
+app.get("/categories", (req, res) => {
+  db.query("SELECT * FROM categories", (err, rows) => {
+    if (err) return res.status(500).send("Databasfel");
+    res.json(rows);
+  });
+});
+
 // ■ Skapa ny produkt
 app.post("/products", (req, res) => {
- const { name, description, price, stock, category_id } = req.body;
- db.query(
- "INSERT INTO products (name, description, price, stock, category_id) VALUES (?, ?, ?, ?, ?)",
- [name, description, price, stock, category_id],
- (err, result) => {
- if (err) {
- res.send("Fel vid skapande av produkt");
- } else {
- res.send("Produkt skapad!");
- }
- }
- );
+  const { name, description, price, stock, category_id } = req.body;
+
+  if (!name || !description || !price || !stock || !category_id) {
+    return res.status(400).send("Alla fält krävs");
+  }
+
+  db.query(
+    "SELECT id FROM categories WHERE id = ?",
+    [category_id],
+    (err, rows) => {
+      if (err) return res.status(500).send("Databasfel");
+      if (rows.length === 0) {
+        return res.status(400).send("Kategorin finns inte");
+      }
+
+      db.query(
+        "INSERT INTO products (name, description, price, stock, category_id) VALUES (?, ?, ?, ?, ?)",
+        [name, description, price, stock, category_id],
+        (err, result) => {
+          if (err) {
+            res.status(500).send("Fel vid skapande av produkt");
+          } else {
+            res.status(201).send("Produkt skapad!");
+          }
+        }
+      );
+    }
+  );
 });
 // ■ Uppdatera produkt
 app.put("/products/:id", (req, res) => {
@@ -163,7 +198,7 @@ app.get("/orders/:id/join", (req, res) => {
     }
 
     if (!rows || rows.length === 0) {
-      return res.status(404).json({ error: "Order finns inte, vänligen gör en beställning!" });
+      return res.status(404).json({ error: "Order finns inte!" });
     }
 
     const order = {

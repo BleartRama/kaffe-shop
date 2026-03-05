@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kaffeshop</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Kaffeshop Produkter</h1>
+
+  <button onclick="loadProducts()">Ladda produkter</button>
+
+  <div id="products"></div>
+
+  <hr>
+
+  <h2>Visa order (JOIN)</h2>
+  <p>Skriv ett order-id och klicka hämta:</p>
+
+  <input id="orderId" type="number" placeholder="Order ID">
+  <button onclick="loadOrder()">Hämta order</button>
+
+  <pre id="orderResult"></pre>
+
+  <script src="script.js"></script>
+</body>
+</html>
